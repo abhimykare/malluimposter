@@ -90,6 +90,13 @@ const en = {
   everyoneReady: "Everyone knows their role.",
   startDiscussion: "Start Discussion",
 
+  // Starter pick
+  whoStarts: "Who starts?",
+  pickingStarter: "Picking someone at random…",
+  starterChosen: "{player} starts!",
+  starterGoesFirst: "{player} goes first",
+  starterHint: "Then go around the circle.",
+
   // Discussion
   discussionTitle: "Now discuss.",
   discussionBody: "Give clues. Ask questions. Find the Imposter.",
@@ -251,6 +258,13 @@ const ml: Translation = {
   rolesHiddenAgain: "റോൾ മറച്ചു. ഫോൺ കൈമാറൂ.",
   everyoneReady: "എല്ലാവരും റോൾ കണ്ടു.",
   startDiscussion: "ചർച്ച തുടങ്ങാം",
+
+  // Starter pick
+  whoStarts: "ആര് തുടങ്ങും?",
+  pickingStarter: "ഒരാളെ യാദൃച്ഛികമായി തിരഞ്ഞെടുക്കുന്നു…",
+  starterChosen: "{player} തുടങ്ങട്ടെ!",
+  starterGoesFirst: "{player} ആദ്യം",
+  starterHint: "പിന്നെ ക്രമത്തിൽ ഓരോരുത്തരായി.",
 
   // Discussion
   discussionTitle: "ഇനി ചർച്ച.",

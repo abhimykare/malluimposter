@@ -67,7 +67,7 @@ Setup lists one optional name field per player (persisted with preferences, max 
 
 ## Game flow
 
-`setup → revealing → discussion → voting → result` (explicit phases in the store). The whole round lives on `/game` as a state-driven flow; the secret word is never in the URL, document title, or localStorage. The imposter's reveal UI only ever receives `{ kind: "imposter", clue }` (see `selectCurrentReveal`), so it cannot render the word.
+`setup → revealing → starter → discussion → voting → result` (explicit phases in the store). After the last card is hidden, a random player is picked to open the discussion (animated roulette); the Imposter is eligible only when the clue was enabled for that round (see `pickStarterIndex`). The whole round lives on `/game` as a state-driven flow; the secret word is never in the URL, document title, or localStorage. The imposter's reveal UI only ever receives `{ kind: "imposter", clue }` (see `selectCurrentReveal`), so it cannot render the word.
 
 ## Datasets & clue philosophy
 

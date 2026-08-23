@@ -130,6 +130,11 @@ describe("game store", () => {
     api.advanceReveal();
     expect(useGameStore.getState().phase).toBe("revealing");
     api.advanceReveal();
+    expect(useGameStore.getState().phase).toBe("starter");
+    expect(useGameStore.getState().starterIndex).not.toBeNull();
+    api.startVoting(); // not allowed yet
+    expect(useGameStore.getState().phase).toBe("starter");
+    api.beginDiscussion();
     expect(useGameStore.getState().phase).toBe("discussion");
     api.startVoting();
     expect(useGameStore.getState().phase).toBe("voting");
@@ -152,6 +157,7 @@ describe("game store", () => {
     api.advanceReveal();
     api.advanceReveal();
     api.advanceReveal();
+    api.beginDiscussion();
     api.startVoting();
     const wrong = (useGameStore.getState().imposterIndex! + 1) % 3;
     api.selectVote(wrong);
@@ -299,5 +305,52 @@ describe("player names", () => {
   it("sanitises persisted names", () => {
     const state = sanitizePersistedState({ settings: { playerNames: ["Ammu", 5, null, " Bob "] } });
     expect(state.settings.playerNames).toEqual(["Ammu", "", "", "Bob"]);
+  });
+});
+
+describe("starter pick", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    fresh();
+  });
+
+  async function runRound(clue: boolean) {
+    useGameStore.getState().setImposterClueEnabled(clue);
+    useGameStore.getState().setPlayerCount(3);
+    expect((await useGameStore.getState().startGame()).ok).toBe(true);
+    const api = useGameStore.getState();
+    api.advanceReveal();
+    api.advanceReveal();
+    api.advanceReveal();
+    const s = useGameStore.getState();
+    return { starter: s.starterIndex!, imposter: s.imposterIndex! };
+  }
+
+  it("never picks the imposter to start when the clue is off", async () => {
+    for (let i = 0; i < 80; i++) {
+      const { starter, imposter } = await runRound(false);
+      expect(starter).not.toBe(imposter);
+      expect(starter).toBeGreaterThanOrEqual(0);
+      expect(starter).toBeLessThan(3);
+      useGameStore.getState().backToSetup();
+    }
+  });
+
+  it("can pick the imposter to start when the clue is on", async () => {
+    let imposterStarted = false;
+    for (let i = 0; i < 120 && !imposterStarted; i++) {
+      const { starter, imposter } = await runRound(true);
+      if (starter === imposter) imposterStarted = true;
+      useGameStore.getState().backToSetup();
+    }
+    expect(imposterStarted).toBe(true);
+  });
+
+  it("resets the starter for a new round", async () => {
+    await runRound(true);
+    useGameStore.setState({ phase: "result" });
+    await useGameStore.getState().playAgain();
+    expect(useGameStore.getState().starterIndex).toBeNull();
+    expect(useGameStore.getState().phase).toBe("revealing");
   });
 });

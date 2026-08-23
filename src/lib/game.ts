@@ -17,7 +17,7 @@ export const DEFAULT_TIMER_MINUTES: TimerMinutes = 2;
 /** How many recent word ids we remember to avoid immediate repeats. */
 export const RECENT_WORDS_LIMIT = 12;
 
-export type GamePhase = "setup" | "revealing" | "discussion" | "voting" | "result";
+export type GamePhase = "setup" | "revealing" | "starter" | "discussion" | "voting" | "result";
 
 export type PlayerRole = "player" | "imposter";
 
@@ -98,6 +98,26 @@ export function pickImposterIndex(playerCount: number): number {
     throw new RangeError(`pickImposterIndex: invalid player count ${playerCount}`);
   }
   return randomInt(playerCount);
+}
+
+/**
+ * Picks who opens the discussion. Every seat is eligible when the imposter
+ * has a clue to work with; without a clue the imposter is excluded so the
+ * opener always has something to say.
+ */
+export function pickStarterIndex(
+  playerCount: number,
+  imposterIndex: number,
+  imposterEligible: boolean,
+): number {
+  if (!isValidPlayerCount(playerCount)) {
+    throw new RangeError(`pickStarterIndex: invalid player count ${playerCount}`);
+  }
+  const candidates: number[] = [];
+  for (let i = 0; i < playerCount; i++) {
+    if (imposterEligible || i !== imposterIndex) candidates.push(i);
+  }
+  return pickRandom(candidates);
 }
 
 /** Builds the seat list, marking exactly one imposter. */

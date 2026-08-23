@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CheckIcon, ChatIcon, VoteIcon } from "@/components/ui/icons";
 import { BottomBar, Screen } from "@/components/ui/Screen";
+import { usePlayerLabel } from "@/hooks/usePlayerLabel";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useGameStore } from "@/store/game-store";
 
 import { GameHeader } from "./GameHeader";
+import { PlayerAvatar } from "./PlayerAvatar";
 import { Timer } from "./Timer";
 
 const item = {
@@ -23,8 +25,10 @@ const item = {
 
 export function DiscussionScreen() {
   const { t } = useTranslation();
+  const labelFor = usePlayerLabel();
   const round = useGameStore((s) => s.round);
   const roundId = useGameStore((s) => s.roundId);
+  const starterIndex = useGameStore((s) => s.starterIndex);
   const startVoting = useGameStore((s) => s.startVoting);
 
   return (
@@ -45,6 +49,12 @@ export function DiscussionScreen() {
             {t("discussionTitle")}
           </h1>
           <p className="mx-auto mt-3 max-w-[28ch] text-lg text-muted text-balance">{t("discussionBody")}</p>
+          {starterIndex !== null && (
+            <p className="mx-auto mt-4 inline-flex max-w-full items-center gap-2 rounded-full bg-accent-soft py-1.5 pr-4 pl-1.5 text-sm font-semibold text-fg">
+              <PlayerAvatar index={starterIndex} size="sm" name={round?.playerNames[starterIndex]} />
+              <span className="truncate">{t("starterGoesFirst", { player: labelFor(starterIndex) })}</span>
+            </p>
+          )}
         </m.div>
 
         {round?.timerEnabled && (

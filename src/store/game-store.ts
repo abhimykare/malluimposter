@@ -16,6 +16,7 @@ import {
   type Player,
   pickImposterIndex,
   pickSecretWord,
+  pickStarterIndex,
   pushRecentWord,
   resolveRound,
   type RoundResult,
@@ -66,6 +67,8 @@ type RoundState = {
   imposterIndex: number | null;
   /** Seat currently holding the phone during the reveal phase. */
   currentPlayerIndex: number;
+  /** Seat chosen at random to open the discussion (set after the last reveal). */
+  starterIndex: number | null;
   selectedVote: number | null;
   result: RoundResult | null;
   /**
@@ -100,6 +103,7 @@ type Actions = {
   // round lifecycle (async: the word datasets are loaded on demand)
   startGame: () => Promise<StartGameResult>;
   advanceReveal: () => void;
+  beginDiscussion: () => void;
   startVoting: () => void;
   selectVote: (index: number | null) => void;
   revealResult: () => void;
@@ -155,6 +159,7 @@ const EMPTY_ROUND: RoundState = {
   secretWord: null,
   imposterIndex: null,
   currentPlayerIndex: 0,
+  starterIndex: null,
   selectedVote: null,
   result: null,
   exitRequested: false,
@@ -297,6 +302,7 @@ async function buildRound(
       secretWord,
       imposterIndex,
       currentPlayerIndex: 0,
+      starterIndex: null,
       selectedVote: null,
       result: null,
       exitRequested: false,
@@ -382,13 +388,23 @@ export const useGameStore = create<GameStore>()(
 
       advanceReveal: () =>
         set((s) => {
-          if (s.phase !== "revealing" || !s.round) return {};
+          if (s.phase !== "revealing" || !s.round || s.imposterIndex === null) return {};
           const next = s.currentPlayerIndex + 1;
           if (next >= s.round.playerCount) {
-            return { phase: "discussion", currentPlayerIndex: s.round.playerCount };
+            // Everyone has seen their card: pick who opens the discussion.
+            // The imposter is only eligible when they have a clue to bluff with.
+            const starterIndex = pickStarterIndex(
+              s.round.playerCount,
+              s.imposterIndex,
+              s.round.imposterClueEnabled,
+            );
+            return { phase: "starter", currentPlayerIndex: s.round.playerCount, starterIndex };
           }
           return { currentPlayerIndex: next };
         }),
+
+      beginDiscussion: () =>
+        set((s) => (s.phase === "starter" ? { phase: "discussion" } : {})),
 
       startVoting: () =>
         set((s) => (s.phase === "discussion" ? { phase: "voting", selectedVote: null } : {})),
