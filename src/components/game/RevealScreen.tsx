@@ -7,6 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/Button";
 import { EyeOffIcon, EyeIcon } from "@/components/ui/icons";
 import { BottomBar, Screen } from "@/components/ui/Screen";
+import { usePlayerLabel } from "@/hooks/usePlayerLabel";
 import { useTranslation } from "@/hooks/useTranslation";
 import { haptics } from "@/lib/haptics";
 import { selectCurrentReveal, useGameStore } from "@/store/game-store";
@@ -30,6 +31,7 @@ const slide = {
  */
 function RevealStage({ playerIndex, total }: { playerIndex: number; total: number }) {
   const { t } = useTranslation();
+  const labelFor = usePlayerLabel();
   const [stage, setStage] = useState<Stage>("pass");
   const advanceReveal = useGameStore((s) => s.advanceReveal);
   // Only read the secret once the card is actually revealed.
@@ -50,7 +52,8 @@ function RevealStage({ playerIndex, total }: { playerIndex: number; total: numbe
     advanceReveal();
   }, [advanceReveal]);
 
-  const label = t("playerN", { n: playerIndex + 1 });
+  const label = labelFor(playerIndex);
+  const customName = useGameStore((s) => s.round?.playerNames[playerIndex] ?? "");
 
   return (
     <>
@@ -58,7 +61,7 @@ function RevealStage({ playerIndex, total }: { playerIndex: number; total: numbe
         <AnimatePresence mode="wait" initial={false}>
           {stage === "pass" ? (
             <m.div key="pass" {...slide} className="flex w-full max-w-sm flex-col items-center text-center">
-              <PlayerAvatar index={playerIndex} size="xl" className="mb-5" />
+              <PlayerAvatar index={playerIndex} size="xl" className="mb-5" name={customName} />
               <h1 className="font-display text-4xl font-extrabold tracking-tight text-fg sm:text-5xl">{label}</h1>
               <p className="mt-4 text-lg text-muted text-balance">{t("passPhoneTo", { player: label })}</p>
               <p className="mt-1 text-base text-faint text-balance">{t("makeSureNobodyLooking")}</p>
@@ -67,6 +70,8 @@ function RevealStage({ playerIndex, total }: { playerIndex: number; total: numbe
             <m.div key="card" {...slide} className="w-full">
               <RevealCard
                 playerIndex={playerIndex}
+                playerName={label}
+                avatarName={customName}
                 card={card}
                 revealed={stage === "revealed"}
                 onReveal={() => {

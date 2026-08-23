@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Confetti } from "@/components/ui/Confetti";
 import { HomeIcon, MaskIcon, RefreshIcon, SlidersIcon, TrophyIcon } from "@/components/ui/icons";
 import { BottomBar, Screen } from "@/components/ui/Screen";
+import { usePlayerLabel } from "@/hooks/usePlayerLabel";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/cn";
 import { haptics } from "@/lib/haptics";
@@ -29,6 +30,7 @@ const pop = {
 
 export function ResultScreen() {
   const { t, language } = useTranslation();
+  const labelFor = usePlayerLabel();
   const router = useRouter();
   const reduced = useReducedMotion();
 
@@ -67,8 +69,8 @@ export function ResultScreen() {
   }
 
   const groupWon = result.outcome === "group";
-  const imposterLabel = t("playerN", { n: result.imposterIndex + 1 });
-  const votedLabel = t("playerN", { n: result.votedIndex + 1 });
+  const imposterLabel = labelFor(result.imposterIndex);
+  const votedLabel = labelFor(result.votedIndex);
   const advance = () => setStep((s) => Math.min(MAX_STEP, s + 1));
 
   const onPlayAgain = () => {
@@ -117,8 +119,8 @@ export function ResultScreen() {
               {...pop}
               className="flex w-full max-w-xs flex-col items-center gap-2 rounded-xl bg-[linear-gradient(160deg,#3a0c1a,#150508)] px-5 py-4 ring-2 ring-inset ring-imposter shadow-glow-imposter"
             >
-              <PlayerAvatar index={result.imposterIndex} size="lg" variant="imposter" />
-              <span className="font-display text-2xl font-extrabold text-white sm:text-3xl">{imposterLabel}</span>
+              <PlayerAvatar index={result.imposterIndex} size="lg" variant="imposter" name={round.playerNames[result.imposterIndex]} />
+              <span className="max-w-full truncate px-2 font-display text-2xl font-extrabold text-white sm:text-3xl">{imposterLabel}</span>
               <span className="eyebrow inline-flex items-center gap-1.5 text-imposter">
                 <MaskIcon size={14} /> {t("imposter")}
               </span>

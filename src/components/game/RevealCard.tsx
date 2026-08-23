@@ -22,6 +22,10 @@ export function wordSizeClass(word: string, language: Language): string {
 
 type RevealCardProps = {
   playerIndex: number;
+  /** Display label (custom name or "Player N"). */
+  playerName: string;
+  /** Custom name for the avatar initial ("" = show the seat number). */
+  avatarName?: string;
   /** null while face-down; the secret is only passed once revealed. */
   card: RevealCardData | null;
   revealed: boolean;
@@ -34,7 +38,7 @@ type RevealCardProps = {
  * reveal either the secret word or the imposter role. The face-up content is
  * only mounted once revealed so nothing secret exists in the DOM beforehand.
  */
-export function RevealCard({ playerIndex, card, revealed, onReveal, className }: RevealCardProps) {
+export function RevealCard({ playerIndex, playerName, avatarName, card, revealed, onReveal, className }: RevealCardProps) {
   const { t, language } = useTranslation();
   const reduced = useReducedMotion();
 
@@ -69,10 +73,8 @@ export function RevealCard({ playerIndex, card, revealed, onReveal, className }:
           )}
         >
           <Logo size={44} className="opacity-60" />
-          <PlayerAvatar index={playerIndex} size="lg" />
-          <span className="font-display text-2xl font-extrabold text-fg">
-            {t("playerN", { n: playerIndex + 1 })}
-          </span>
+          <PlayerAvatar index={playerIndex} size="lg" name={avatarName} />
+          <span className="max-w-full truncate px-2 font-display text-2xl font-extrabold text-fg">{playerName}</span>
           <span className="relative mt-2 flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 font-semibold text-on-accent shadow-glow-accent">
             {!revealed && (
               <span
@@ -108,8 +110,8 @@ export function RevealCard({ playerIndex, card, revealed, onReveal, className }:
           {revealed && card && (
             <>
               <span className="absolute top-4 left-0 right-0 flex items-center justify-center gap-2 text-xs font-semibold text-white/60">
-                <PlayerAvatar index={playerIndex} size="sm" className="!size-6 !text-[0.7rem]" />
-                {t("playerN", { n: playerIndex + 1 })}
+                <PlayerAvatar index={playerIndex} size="sm" className="!size-6 !text-[0.7rem]" name={avatarName} />
+                <span className="max-w-[60%] truncate">{playerName}</span>
               </span>
               {card.kind === "imposter" ? (
                 <ImposterFace clue={card.clue} />

@@ -20,6 +20,7 @@ import { useGameStore, type StartGameResult } from "@/store/game-store";
 
 import { CategoryPicker } from "./CategoryPicker";
 import { PlayerCounter } from "./PlayerCounter";
+import { PlayerNames } from "./PlayerNames";
 
 export function SetupScreen() {
   const { t, language } = useTranslation();
@@ -99,6 +100,11 @@ export function SetupScreen() {
           <section>
             <SectionLabel hint={t("playersHint")}>{t("players")}</SectionLabel>
             <PlayerCounter />
+          </section>
+
+          <section>
+            <SectionLabel>{t("playerNames")}</SectionLabel>
+            <PlayerNames />
           </section>
 
           <section className="flex flex-col gap-2.5">

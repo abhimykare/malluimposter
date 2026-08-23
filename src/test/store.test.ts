@@ -263,3 +263,41 @@ describe("persistence", () => {
     expect(useGameStore.getState().settings.playerCount).toBe(defaultSettings().playerCount);
   });
 });
+
+describe("player names", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    fresh();
+  });
+
+  it("stores trimmed, capped names and keeps the array compact", () => {
+    useGameStore.getState().setPlayerName(2, "  Anu   Mol  ");
+    expect(useGameStore.getState().settings.playerNames).toEqual(["", "", "Anu Mol"]);
+    useGameStore.getState().setPlayerName(0, "x".repeat(60));
+    expect(useGameStore.getState().settings.playerNames[0]).toHaveLength(24);
+    useGameStore.getState().setPlayerName(2, "");
+    expect(useGameStore.getState().settings.playerNames).toEqual(["x".repeat(24)]);
+    useGameStore.getState().clearPlayerNames();
+    expect(useGameStore.getState().settings.playerNames).toEqual([]);
+  });
+
+  it("freezes names into the round and keeps the imposter random", async () => {
+    useGameStore.getState().setPlayerCount(4);
+    useGameStore.getState().setPlayerName(1, "Kichu");
+    const seen = new Set<number>();
+    for (let i = 0; i < 60; i++) {
+      expect((await useGameStore.getState().startGame()).ok).toBe(true);
+      const s = useGameStore.getState();
+      expect(s.round?.playerNames).toEqual(["", "Kichu", "", ""]);
+      seen.add(s.imposterIndex!);
+      useGameStore.getState().backToSetup();
+    }
+    // Over 60 rounds every seat should have been the imposter at least once.
+    expect(seen.size).toBe(4);
+  });
+
+  it("sanitises persisted names", () => {
+    const state = sanitizePersistedState({ settings: { playerNames: ["Ammu", 5, null, " Bob "] } });
+    expect(state.settings.playerNames).toEqual(["Ammu", "", "", "Bob"]);
+  });
+});

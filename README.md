@@ -61,6 +61,10 @@ src/
 scripts/generate-icons.mjs  rasterises the SVG mark into PWA icons + OG image (uses Next's bundled sharp)
 ```
 
+## Player names
+
+Setup lists one optional name field per player (persisted with preferences, max 24 chars). Names are frozen into the round when it starts and shown on the reveal, voting and result screens; blank seats fall back to "Player N". The Imposter is always chosen with `crypto.getRandomValues()` — names never influence it.
+
 ## Game flow
 
 `setup → revealing → discussion → voting → result` (explicit phases in the store). The whole round lives on `/game` as a state-driven flow; the secret word is never in the URL, document title, or localStorage. The imposter's reveal UI only ever receives `{ kind: "imposter", clue }` (see `selectCurrentReveal`), so it cannot render the word.
