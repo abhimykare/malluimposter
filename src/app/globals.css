@@ -1,0 +1,368 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------------------------------- */
+/*  Design tokens                                                             */
+/*  Dark is the default (premium party-game feel). Light is opt-in.           */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0d14;
+  --bg-elevated: #10141f;
+  --surface: #151b2a;
+  --surface-2: #1c2435;
+  --surface-3: #242d42;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #f4f6fb;
+  --text-muted: #a4adc3;
+  --text-faint: #6f7a95;
+
+  --accent: #ffb627;
+  --accent-strong: #ff8a1f;
+  --accent-soft: rgba(255, 182, 39, 0.14);
+  --on-accent: #1a1200;
+
+  --imposter: #ff3b5c;
+  --imposter-strong: #d91e4a;
+  --imposter-soft: rgba(255, 59, 92, 0.14);
+  --on-imposter: #fff5f7;
+
+  --word: #27d3c5;
+  --word-strong: #13a99d;
+  --word-soft: rgba(39, 211, 197, 0.14);
+  --on-word: #00211e;
+
+  --success: #2fd48f;
+  --success-soft: rgba(47, 212, 143, 0.16);
+  --danger: #ff5d5d;
+
+  --ring: #ffb627;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.7), 0 8px 20px -10px rgba(0, 0, 0, 0.4);
+  --shadow-glow-accent: 0 10px 40px -10px rgba(255, 182, 39, 0.55);
+  --shadow-glow-imposter: 0 18px 60px -18px rgba(255, 59, 92, 0.6);
+  --shadow-glow-word: 0 18px 60px -18px rgba(39, 211, 197, 0.55);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f6f3ec;
+  --bg-elevated: #fbfaf6;
+  --surface: #ffffff;
+  --surface-2: #f2eee5;
+  --surface-3: #e9e4d8;
+  --border: rgba(24, 20, 8, 0.09);
+  --border-strong: rgba(24, 20, 8, 0.18);
+
+  --text: #15171f;
+  --text-muted: #5a6176;
+  --text-faint: #8b92a6;
+
+  --accent: #f0a500;
+  --accent-strong: #e46a00;
+  --accent-soft: rgba(240, 165, 0, 0.16);
+  --on-accent: #1a1200;
+
+  --imposter: #e11d48;
+  --imposter-strong: #be123c;
+  --imposter-soft: rgba(225, 29, 72, 0.12);
+  --on-imposter: #fff5f7;
+
+  --word: #0fa79b;
+  --word-strong: #0c8a80;
+  --word-soft: rgba(15, 167, 155, 0.14);
+  --on-word: #00211e;
+
+  --success: #16a36a;
+  --success-soft: rgba(22, 163, 106, 0.14);
+  --danger: #d93025;
+
+  --ring: #e46a00;
+
+  --shadow-sm: 0 1px 2px rgba(24, 20, 8, 0.08);
+  --shadow-md: 0 8px 24px -10px rgba(24, 20, 8, 0.18), 0 2px 6px rgba(24, 20, 8, 0.06);
+  --shadow-lg: 0 24px 60px -24px rgba(24, 20, 8, 0.28), 0 8px 20px -12px rgba(24, 20, 8, 0.12);
+  --shadow-glow-accent: 0 10px 36px -10px rgba(240, 165, 0, 0.45);
+  --shadow-glow-imposter: 0 18px 50px -18px rgba(225, 29, 72, 0.45);
+  --shadow-glow-word: 0 18px 50px -18px rgba(15, 167, 155, 0.4);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+
+  --color-imposter: var(--imposter);
+  --color-imposter-strong: var(--imposter-strong);
+  --color-imposter-soft: var(--imposter-soft);
+  --color-on-imposter: var(--on-imposter);
+
+  --color-word: var(--word);
+  --color-word-strong: var(--word-strong);
+  --color-word-soft: var(--word-soft);
+  --color-on-word: var(--on-word);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-latin), var(--font-malayalam), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Noto Sans Malayalam", sans-serif;
+  --font-display: var(--font-latin), var(--font-malayalam), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2.25rem;
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-glow-accent: var(--shadow-glow-accent);
+  --shadow-glow-imposter: var(--shadow-glow-imposter);
+  --shadow-glow-word: var(--shadow-glow-word);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Base                                                                      */
+/* -------------------------------------------------------------------------- */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100%;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+    /* Never allow horizontal page scroll (decorative overflow is clipped). */
+    overflow-x: clip;
+  }
+
+  /* Malayalam glyphs are taller; give them room. */
+  html[lang="ml"] body {
+    line-height: 1.65;
+  }
+  html[lang="ml"] h1,
+  html[lang="ml"] h2,
+  html[lang="ml"] h3 {
+    line-height: 1.35;
+  }
+
+
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Utilities                                                                 */
+/* -------------------------------------------------------------------------- */
+
+@utility safe-pb {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+@utility safe-pt {
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+@utility safe-px {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+@utility pb-safe-cta {
+  /* Room for a sticky bottom CTA + safe area */
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
+}
+@utility pb-safe-cta-tall {
+  /* Room for a two-row sticky bottom bar + safe area */
+  padding-bottom: calc(10.5rem + env(safe-area-inset-bottom));
+}
+@utility text-balance {
+  text-wrap: balance;
+}
+@utility text-pretty {
+  text-wrap: pretty;
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* CSS-only entrance used by server-rendered screens (no JS needed). */
+@utility animate-fade-up {
+  animation: fade-up 0.5s var(--ease-out-expo) both;
+}
+
+/* Small uppercase section/eyebrow label. Malayalam overrides live below (unlayered). */
+@utility eyebrow {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+/* Ambient backdrop used behind screens — light enough to stay fast. */
+@utility bg-ambient {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(60% 45% at 50% -5%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 100% 100%, color-mix(in srgb, var(--word) 7%, transparent), transparent 70%);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+}
+
+/* Card surface with a faint top highlight for depth. */
+@utility surface-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, white 4%, transparent),
+    transparent 40%
+  );
+}
+
+/* Secret-card textures */
+@utility card-back-pattern {
+  background-color: var(--surface-2);
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent) 22%, transparent) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+/* Hide scrollbars for horizontal chip rows (still scrollable). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Prevent layout shift on fixed bottom bars */
+@utility bottom-bar {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Malayalam typography overrides (unlayered on purpose so they beat          */
+/*  Tailwind's utilities layer).                                               */
+/* -------------------------------------------------------------------------- */
+
+/* Letter-spacing breaks Malayalam conjunct shaping — neutralise tracking. */
+html[lang="ml"] [class*="tracking-"],
+html[lang="ml"] .eyebrow {
+  letter-spacing: 0;
+}
+
+/* Uppercase is meaningless for Malayalam; eyebrow labels get a touch more size instead. */
+html[lang="ml"] .eyebrow {
+  font-size: 0.8rem;
+  text-transform: none;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Pre-hydration state driven by <html lang> / <html data-theme>             */
+/*  (set by an inline script before first paint; kept in sync by the store)   */
+/* -------------------------------------------------------------------------- */
+
+/* Bilingual server-rendered copy: show only the active language. */
+html[lang="ml"] [data-i18n="en"],
+html:not([lang="ml"]) [data-i18n="ml"] {
+  display: none;
+}
+
+/* Language switcher selected pill. */
+html[lang="ml"] .lang-option[data-lang-option="ml"],
+html:not([lang="ml"]) .lang-option[data-lang-option="en"] {
+  background-color: var(--surface);
+  color: var(--text);
+  box-shadow:
+    var(--shadow-sm),
+    inset 0 0 0 1px var(--border-strong);
+}
+
+/* Theme toggle icon. */
+html[data-theme="light"] [data-theme-icon="dark"],
+html:not([data-theme="light"]) [data-theme-icon="light"] {
+  display: none;
+}
