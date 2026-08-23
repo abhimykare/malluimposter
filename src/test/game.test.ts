@@ -11,6 +11,7 @@ import {
   MIN_PLAYERS,
   pickImposterIndex,
   pickSecretWord,
+  pickStarterIndex,
   pushRecentWord,
   resolveRound,
 } from "@/lib/game";
@@ -118,5 +119,19 @@ describe("formatClock", () => {
     expect(formatClock(125)).toBe("02:05");
     expect(formatClock(3600)).toBe("60:00");
     expect(formatClock(-4)).toBe("00:00");
+  });
+});
+
+describe("starter selection", () => {
+  it("excludes the imposter when they have no clue", () => {
+    for (let i = 0; i < 200; i++) expect(pickStarterIndex(5, 2, false)).not.toBe(2);
+  });
+  it("includes every seat (incl. imposter) when the clue is enabled", () => {
+    const seen = new Set<number>();
+    for (let i = 0; i < 400; i++) seen.add(pickStarterIndex(4, 1, true));
+    expect([...seen].sort()).toEqual([0, 1, 2, 3]);
+  });
+  it("rejects bad input", () => {
+    expect(() => pickStarterIndex(2, 0, true)).toThrow();
   });
 });

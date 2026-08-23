@@ -12,6 +12,7 @@ import { DiscussionScreen } from "./DiscussionScreen";
 import { ResultScreen } from "./ResultScreen";
 import { RevealScreen } from "./RevealScreen";
 import { SetupScreen } from "./SetupScreen";
+import { StarterScreen } from "./StarterScreen";
 import { VotingScreen } from "./VotingScreen";
 
 /**
@@ -26,6 +27,8 @@ function PhaseScreen({ phase }: { phase: GamePhase }) {
       return <SetupScreen />;
     case "revealing":
       return <RevealScreen />;
+    case "starter":
+      return <StarterScreen />;
     case "discussion":
       return <DiscussionScreen />;
     case "voting":
