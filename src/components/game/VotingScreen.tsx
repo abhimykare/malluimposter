@@ -5,6 +5,7 @@ import { m } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { CheckIcon } from "@/components/ui/icons";
 import { BottomBar, Screen } from "@/components/ui/Screen";
+import { usePlayerLabel } from "@/hooks/usePlayerLabel";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/cn";
 import { useGameStore } from "@/store/game-store";
@@ -17,6 +18,7 @@ function VoteCard({
   selected,
   onSelect,
   label,
+  avatarName,
   selectedLabel,
   delay,
 }: {
@@ -24,6 +26,7 @@ function VoteCard({
   selected: boolean;
   onSelect: (index: number) => void;
   label: string;
+  avatarName: string;
   selectedLabel: string;
   delay: number;
 }) {
@@ -53,7 +56,7 @@ function VoteCard({
       >
         <CheckIcon size={14} strokeWidth={3} />
       </span>
-      <PlayerAvatar index={index} size="lg" variant={selected ? "imposter" : "default"} />
+      <PlayerAvatar index={index} size="lg" variant={selected ? "imposter" : "default"} name={avatarName} />
       <span className="min-w-0">
         <span className="block truncate text-[0.95rem] font-semibold leading-tight text-fg">{label}</span>
         <span className={cn("block text-xs font-medium leading-tight", selected ? "text-imposter" : "text-transparent")}>
@@ -66,7 +69,9 @@ function VoteCard({
 
 export function VotingScreen() {
   const { t } = useTranslation();
+  const labelFor = usePlayerLabel();
   const playerCount = useGameStore((s) => s.round?.playerCount ?? 0);
+  const names = useGameStore((s) => s.round?.playerNames);
   const selectedVote = useGameStore((s) => s.selectedVote);
   const selectVote = useGameStore((s) => s.selectVote);
   const revealResult = useGameStore((s) => s.revealResult);
@@ -92,7 +97,8 @@ export function VotingScreen() {
             index={index}
             selected={selectedVote === index}
             onSelect={selectVote}
-            label={t("playerN", { n: index + 1 })}
+            label={labelFor(index)}
+            avatarName={names?.[index] ?? ""}
             selectedLabel={t("selected")}
             delay={Math.min(index, 12) * 0.03}
           />
@@ -101,7 +107,7 @@ export function VotingScreen() {
 
       <BottomBar width="wide">
         <p className="min-h-5 text-center text-sm text-muted" aria-live="polite">
-          {selectedVote !== null ? t("votedFor", { player: t("playerN", { n: selectedVote + 1 }) }) : ""}
+          {selectedVote !== null ? t("votedFor", { player: labelFor(selectedVote) }) : ""}
         </p>
         <Button
           size="lg"

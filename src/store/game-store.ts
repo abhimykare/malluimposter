@@ -7,6 +7,7 @@ import {
   clampPlayerCount,
   createPlayers,
   DEFAULT_PLAYERS,
+  MAX_PLAYERS,
   DEFAULT_TIMER_MINUTES,
   filterWordsByCategories,
   type GamePhase,
@@ -34,7 +35,11 @@ export type ThemePreference = "dark" | "light" | "system";
  */
 export type PersistedSettings = Omit<GameSettings, "selectedCategories"> & {
   selectedCategories: Record<Language, CategoryId[]>;
+  /** Optional display names per seat index; "" means "Player N". */
+  playerNames: string[];
 };
+
+export const MAX_PLAYER_NAME_LENGTH = 24;
 
 export type StartGameResult =
   | { ok: true }
@@ -44,6 +49,8 @@ export type StartGameResult =
 export type RoundConfig = {
   language: Language;
   playerCount: number;
+  /** Names frozen for this round (same length as playerCount; "" = default). */
+  playerNames: string[];
   imposterClueEnabled: boolean;
   timerEnabled: boolean;
   timerDuration: TimerMinutes;
@@ -81,6 +88,8 @@ type Actions = {
   setPlayerCount: (count: number) => void;
   incrementPlayers: () => void;
   decrementPlayers: () => void;
+  setPlayerName: (index: number, name: string) => void;
+  clearPlayerNames: () => void;
   toggleCategory: (id: CategoryId) => void;
   selectAllCategories: () => void;
   setImposterClueEnabled: (enabled: boolean) => void;
@@ -123,7 +132,19 @@ export function defaultSettings(): PersistedSettings {
     imposterClueEnabled: true,
     timerEnabled: false,
     timerDuration: DEFAULT_TIMER_MINUTES,
+    playerNames: [],
   };
+}
+
+/** Normalises a user-entered name: trimmed, single-spaced, length-capped. */
+export function sanitizePlayerName(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.replace(/\s+/g, " ").trim().slice(0, MAX_PLAYER_NAME_LENGTH);
+}
+
+function sanitizePlayerNames(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 20).map(sanitizePlayerName);
 }
 
 const EMPTY_ROUND: RoundState = {
@@ -201,6 +222,7 @@ export function sanitizePersistedState(input: unknown): PersistedState {
     timerDuration: isTimerMinutes(rawSettings.timerDuration)
       ? rawSettings.timerDuration
       : defaults.timerDuration,
+    playerNames: sanitizePlayerNames(rawSettings.playerNames),
   };
 
   const recentWordIds = Array.isArray(raw.recentWordIds)
@@ -266,6 +288,7 @@ async function buildRound(
       round: {
         language,
         playerCount,
+        playerNames: Array.from({ length: playerCount }, (_, i) => sanitizePlayerName(settings.playerNames[i])),
         imposterClueEnabled: settings.imposterClueEnabled,
         timerEnabled: settings.timerEnabled,
         timerDuration: settings.timerDuration,
@@ -302,6 +325,17 @@ export const useGameStore = create<GameStore>()(
         set((s) => ({
           settings: { ...s.settings, playerCount: clampPlayerCount(s.settings.playerCount - 1) },
         })),
+      setPlayerName: (index, name) =>
+        set((s) => {
+          if (index < 0 || index >= MAX_PLAYERS) return {};
+          const names = s.settings.playerNames.slice();
+          while (names.length <= index) names.push("");
+          names[index] = sanitizePlayerName(name);
+          // Drop trailing blanks so the persisted array stays compact.
+          while (names.length > 0 && names[names.length - 1] === "") names.pop();
+          return { settings: { ...s.settings, playerNames: names } };
+        }),
+      clearPlayerNames: () => set((s) => ({ settings: { ...s.settings, playerNames: [] } })),
       toggleCategory: (id) =>
         set((s) => {
           const language = s.settings.language;

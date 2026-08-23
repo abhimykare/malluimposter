@@ -12,7 +12,22 @@ type PlayerAvatarProps = {
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   variant?: "default" | "imposter" | "muted";
+  /** Optional custom name; its first character replaces the seat number. */
+  name?: string;
 };
+
+/** First user-perceived character of a name (handles Malayalam clusters). */
+function initialOf(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return "";
+  try {
+    const seg = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+    const first = seg.segment(trimmed)[Symbol.iterator]().next().value;
+    return first ? first.segment.toLocaleUpperCase() : "";
+  } catch {
+    return [...trimmed][0]?.toLocaleUpperCase() ?? "";
+  }
+}
 
 const SIZES = {
   sm: "size-9 text-sm",
@@ -22,7 +37,8 @@ const SIZES = {
 };
 
 /** Numbered circular avatar; colour is derived from the seat index. */
-export function PlayerAvatar({ index, size = "md", className, variant = "default" }: PlayerAvatarProps) {
+export function PlayerAvatar({ index, size = "md", className, variant = "default", name }: PlayerAvatarProps) {
+  const initial = name ? initialOf(name) : "";
   const hue = playerHue(index);
   const style =
     variant === "imposter"
@@ -45,7 +61,7 @@ export function PlayerAvatar({ index, size = "md", className, variant = "default
         className,
       )}
     >
-      {index + 1}
+      {initial || index + 1}
     </span>
   );
 }
