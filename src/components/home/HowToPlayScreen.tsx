@@ -1,4 +1,5 @@
 import { I18nText } from "@/components/i18n/I18nText";
+import { CreatorFooter } from "@/components/layout/CreatorFooter";
 import { BackButton } from "@/components/ui/BackButton";
 import { LinkButton } from "@/components/ui/Button";
 import { PlayIcon } from "@/components/ui/icons";
@@ -71,6 +72,8 @@ export function HowToPlayScreen() {
       <p className="mt-5 rounded-lg bg-accent-soft px-4 py-3 text-sm font-medium text-fg/90 text-pretty">
         💡 <I18nText k="rulesTip" />
       </p>
+
+      <CreatorFooter className="mt-6" />
 
       <BottomBar width="wide">
         <LinkButton href="/game" size="lg" fullWidth leadingIcon={<PlayIcon size={20} />} className="sm:mx-auto sm:max-w-md">
