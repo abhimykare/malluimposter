@@ -1,5 +1,6 @@
 import { Logo, Wordmark } from "@/components/brand/Logo";
 import { I18nText } from "@/components/i18n/I18nText";
+import { CreatorFooter } from "@/components/layout/CreatorFooter";
 import { PhoneIcon, ShieldIcon, UsersIcon } from "@/components/ui/icons";
 import { Screen } from "@/components/ui/Screen";
 import { APP_NAME } from "@/lib/site";
@@ -69,9 +70,10 @@ export function HomeScreen() {
         </ul>
       </div>
 
-      <p className="pb-2 text-center text-xs text-faint text-pretty">
+      <p className="text-center text-xs text-faint text-pretty">
         <I18nText k="homePrivacyNote" />
       </p>
+      <CreatorFooter className="mt-2" />
     </Screen>
   );
 }

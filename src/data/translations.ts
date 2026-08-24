@@ -38,6 +38,7 @@ const en = {
 
   // Home
   homePrivacyNote: "No sign-up. No internet needed. Everything stays on this phone.",
+  developedBy: "Developed by",
   homePassPhone: "Pass one phone around",
   homePlayers: "3–20 players",
   homeMinutes: "5-minute rounds",
@@ -207,6 +208,7 @@ const ml: Translation = {
 
   // Home
   homePrivacyNote: "ലോഗിൻ വേണ്ട. ഇന്റർനെറ്റ് വേണ്ട. എല്ലാം ഈ ഫോണിൽ തന്നെ.",
+  developedBy: "നിർമ്മിച്ചത്",
   homePassPhone: "ഒരു ഫോൺ കൈമാറി കളിക്കാം",
   homePlayers: "3–20 കളിക്കാർ",
   homeMinutes: "5 മിനിറ്റ് റൗണ്ടുകൾ",
